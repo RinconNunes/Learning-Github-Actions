@@ -1,6 +1,7 @@
 name: My-First-Workflow
 # To get my trigger opn every push in this repo in any branch 
-on: push 
+on:  
+    workflow_dispatch:
 
 jobs:
   job1:
