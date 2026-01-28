@@ -1,52 +1,27 @@
-name: My-First-Workflow
-# To get my trigger opn every push in this repo in any branch 
-on:  
+name: my-first-workflow
+# To get a trigger on every push in this repo in any branch 
+on:
   push: 
+    branches:
+      - main
+  pull_request:
+    branches:
+      -main
 
-jobs:
-  job1:
-    name: JOB1
+jobs: 
+  unit-tests:
+    name: Running Unit Tests
     runs-on: ubuntu-latest
-    steps: 
-      - name: Step-1
-        run: |
-          pwd
-          ls -ltr
-          hostname
-      - name: Step-2 - Checkout
+    steps:
+      - name: Checkout Code
         uses: actions/checkout@v5.0.0
-      - name: Step-3
+      - name: Setup Python
+        uses: actions/setup-python@v6.0.0
+        with:
+          python-version: '3.10'
+      - name: Install Dependencies
         run: |
-          echo 'pwd' >> myartifact.txt
-          mkdir artifacts
-          echo 'ls -ltr' >> artifacts/list.txt 
-          echo 'hostname' >> artifacts/hostname.txt
-      - name: Upload Single file
-        uses: actions/upload-artifact@v5.0.0 
-        with:
-          name: single_file 
-          path: /myartifact.txt
-      - name: Upload from directory
-        uses: actions/upload-artifact@v5.0.0 
-        with:
-          name: directory_artifacts
-          path: artifacts/
-      - name: Upload from multiple paths
-        uses: actions/upload-artifact@v5.0.0 
-        with:
-          name: multiple_paths
-          path: |
-            ./myartifact.txt
-            artifacts/
-      - name: Upload from multiple paths with exclusions
-        uses: actions/upload-artifact@v5.0.0 
-        with:
-          name: multiple_paths_with_exclusions
-          path: |
-            ./myartifact.txt
-            artifacts/ 
-            !**/hostnme.txt
-           
-             
-      
-
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Run Unit Tests
+        run: pytest -v
